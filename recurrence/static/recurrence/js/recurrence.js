@@ -560,12 +560,12 @@ recurrence.serialize = function(rule_or_recurrence) {
                 return initial;
             }
         };
-        return pad(dt.getUTCFullYear(), 4) +
-            pad(dt.getUTCMonth() + 1, 2) +
-            pad(dt.getUTCDate(), 2) + 'T' +
-            pad(dt.getUTCHours(), 2) +
-            pad(dt.getUTCMinutes(), 2) +
-            pad(dt.getUTCSeconds(), 2) + 'Z';
+        return pad(dt.getFullYear(), 4) +
+            pad(dt.getMonth() + 1, 2) +
+            pad(dt.getDate(), 2) + 'T' +
+            pad(dt.getHours(), 2) +
+            pad(dt.getMinutes(), 2) +
+            pad(dt.getSeconds(), 2) + 'Z';
     };
 
     var serialize_rule = function(rule) {
@@ -668,12 +668,12 @@ recurrence.deserialize = function(text) {
         }
         var dt = new Date();
         if (text.indexOf('Z') > 0) {
-            dt.setUTCFullYear(year);
-            dt.setUTCMonth(month - 1);
-            dt.setUTCDate(day);
-            dt.setUTCHours(hour);
-            dt.setUTCMinutes(minute);
-            dt.setUTCSeconds(second);
+            dt.setFullYear(year);
+            dt.setMonth(month - 1);
+            dt.setDate(day);
+            dt.setHours(hour);
+            dt.setMinutes(minute);
+            dt.setSeconds(second);
         } else {
             dt.setFullYear(year);
             dt.setMonth(month - 1);
