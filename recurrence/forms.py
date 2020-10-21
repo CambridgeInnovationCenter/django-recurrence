@@ -42,7 +42,10 @@ class RecurrenceWidget(forms.Textarea):
             widget_init_js))
 
     def get_media(self):
+        extra = '' if settings.DEBUG else '.min'
         js = [
+            'admin/js/vendor/jquery/jquery%s.js' % extra,
+            'admin/js/jquery.init.js',
             staticfiles_storage.url('recurrence/js/recurrence.js'),
             staticfiles_storage.url('recurrence/js/recurrence-widget.js'),
         ]
@@ -204,11 +207,12 @@ def find_recurrence_i18n_js_catalog():
         return _recurrence_javascript_catalog_url
 
     # first try to use the dynamic form of the javascript_catalog view
-    try:
-        return reverse(
-            i18n.javascript_catalog, kwargs={'packages': 'recurrence'})
-    except NoReverseMatch:
-        pass
+    if hasattr(i18n, 'javascript_catalog'):
+        try:
+            return reverse(
+                i18n.javascript_catalog, kwargs={'packages': 'recurrence'})
+        except NoReverseMatch:
+            pass
 
     # then scan the entire urlconf for a javascript_catalague pattern
     # that manually selects recurrence as one of the packages to include
@@ -218,12 +222,12 @@ def find_recurrence_i18n_js_catalog():
                 match = check_urlpatterns(pattern.url_patterns)
                 if match:
                     return match
-            elif (pattern.callback == i18n.javascript_catalog and
+            elif (hasattr(i18n, 'javascript_catalog') and pattern.callback == i18n.javascript_catalog and
                   'recurrence' in pattern.default_args.get('packages', [])):
                 if pattern.name:
-                    return reverse(pattern.name)
+                    return urls.reverse(pattern.name)
                 else:
-                    return reverse(pattern.callback)
+                    return urls.reverse(pattern.callback)
 
     root_urlconf = __import__(settings.ROOT_URLCONF, {}, {}, [''])
     url = check_urlpatterns(root_urlconf.urlpatterns)
